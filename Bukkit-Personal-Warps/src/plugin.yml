@@ -1,0 +1,14 @@
+name: Personal Warps
+version: 1.1
+author: gameguy27
+main: me.gameguy27.PersonalWarps.PersonalWarps
+description: Save your favorite locations!
+commands:
+    setpwarp:
+        description: Set players warp.
+        usage: /<command> <warp_number>
+        permission: personal.warps.use
+    pwarp:
+        description: Warp to set warp.
+        usage: /<command> <warp_number>
+        permission: personal.warps.use
