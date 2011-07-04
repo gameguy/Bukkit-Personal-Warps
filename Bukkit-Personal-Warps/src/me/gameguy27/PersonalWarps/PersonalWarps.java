@@ -183,12 +183,12 @@ public class PersonalWarps extends JavaPlugin {
 			try {
 				int index = Integer.parseInt(args[0]);
 				int max_index = sender.isOp() ? ops_warp_count : warp_count;
-				max_index = permissions.getInt("users." + player.getDisplayName(), max_index);
 				if (permissionHandler != null) {
 					@SuppressWarnings("deprecation")
 					String group = permissionHandler.getGroup(player.getWorld().getName(), player.getDisplayName());
 					max_index = permissions.getInt("groups." + group, max_index);
 				}
+				max_index = permissions.getInt("users." + player.getDisplayName(), max_index);
 				if (index >= max_index || index < 0) {
 					sender.sendMessage(invalid);
 				} else {
@@ -200,6 +200,7 @@ public class PersonalWarps extends JavaPlugin {
 			}
 			return true;
 		}
+		
 		if (cmd.getName().equalsIgnoreCase("pwarp")) {
 			String invalid = warp_invalid.replace("{IND}", args[0]);
 			if (permissionHandler != null && !permissionHandler.has((Player) sender, "personal.warps.use"))
@@ -212,6 +213,80 @@ public class PersonalWarps extends JavaPlugin {
 			}
 			return true;
 		}
+		
+		if (cmd.getName().equalsIgnoreCase("getpwarps")) {
+			if (args[0] == null) {
+				return false;
+			}
+			int warps = getWarpCount(args[0], ((Player) sender).isOp(), ((Player) sender).getWorld().getName());
+			sender.sendMessage(args[0] + " has " + Integer.toString(warps) + " warps.");
+			return true;
+		}
+		
+		if (cmd.getName().equalsIgnoreCase("getgwarps")) {
+			if (args[0] == null) {
+				return false;
+			}
+			int warps = getWarpCountGroup(args[0]);
+			sender.sendMessage("Group " + args[0] + " has " + Integer.toString(warps) + " warps.");
+			return true;
+		}
+		
+		if (cmd.getName().equalsIgnoreCase("setpwarps")) {
+			if (args[0] == null || args[1] == null) {
+				return false;
+			}
+			try {
+				int warps = Integer.parseInt(args[1]);
+				if (warps < 1) {
+					throw (new NumberFormatException());
+				}
+				permissions.setProperty("users." + args[0], warps);
+				permissions.save();
+				sender.sendMessage(args[0] + " now has " + args[1] + " warps.");
+				return true;
+			} catch (NumberFormatException e) {
+				sender.sendMessage("'" + args[1] + "' is not a valid number.");
+			}
+		}
+		
+		if (cmd.getName().equalsIgnoreCase("setgwarps")) {
+			if (args[0] == null || args[1] == null) {
+				return false;
+			}
+			try {
+				int warps = Integer.parseInt(args[1]);
+				if (warps < 1) {
+					throw (new NumberFormatException());
+				}
+				permissions.setProperty("groups." + args[0], warps);
+				permissions.save();
+				sender.sendMessage(args[0] + " now has " + args[1] + " warps.");
+				return true;
+			} catch (NumberFormatException e) {
+				sender.sendMessage("'" + args[1] + "' is not a valid number.");
+			}
+			return true;
+		}
+		
 		return false;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public int getWarpCount(String player, boolean op, String world) {
+		int max = op ? ops_warp_count : warp_count;
+		if (permissionHandler != null) {
+			max = permissions.getInt("groups." + permissionHandler.getGroup(world, player), max);
+		}
+		max = permissions.getInt("users." + player, max);
+		return max;
+	}
+	
+	public int getWarpCountGroup(String group) {
+		int max = warp_count;
+		if (permissionHandler != null) {
+			max = permissions.getInt("groups." + group, max);
+		}
+		return max;
 	}
 }

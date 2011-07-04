@@ -12,3 +12,19 @@ commands:
         description: Warp to set warp.
         usage: /<command> <warp_number>
         permission: personal.warps.use
+    getpwarps:
+        description: Gets number of warps a player has.
+        usage: /<command> <player>
+        permission: personal.warps.admin
+    getgwarps:
+        description: Gets number of warps a group has.
+        usage: /<command> <group>
+        permission: personal.warps.admin
+    setpwarps:
+        description: Sets number of warps a player has.
+        usage: /<command> <player> <number>
+        permission: personal.warps.admin
+    setgwarps:
+        description: Sets a number of warps a group has.
+        usage: /<command> <group> <number>
+        permission: personal.warps.admin
